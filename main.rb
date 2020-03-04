@@ -13,11 +13,10 @@ class FanboxItems
     @random = Random.new
   end
   def get_all
-    creator_info = JSON.parse(get_raw("https://www.pixiv.net/ajax/fanbox/creator?userId=#{@user_id}"))
-    postlist = creator_info['body']['post']
+    postlist = JSON.parse(get_raw("https://fanbox.pixiv.net/api/post.listCreator?userId=#{@user_id}&limit=10"))
     while loop
       sleep(@random.rand(1.0)+1)
-      postlist["items"].each do |item|
+      postlist['body']["items"].each do |item|
         savedataDirPath = "#{@savedataDir}/#{@user_id}/posts/#{item['id']}_#{FSEscape.escape(item['title'])}/"
         next unless Dir.glob("#{savedataDirPath}").empty?
         sleep(@random.rand(1.0)+1)
