@@ -94,9 +94,9 @@ class FanboxItems
           p "ERROR: undefined post type (#{item['id']})"
         end
       end
-      p postlist['nextUrl']
-      break unless postlist['nextUrl']
-      postlist = JSON.parse(get_raw(postlist['nextUrl']))['body']
+      p postlist['body']['nextUrl']
+      break unless postlist['body']['nextUrl']
+      postlist = JSON.parse(get_raw(postlist['body']['nextUrl']))
     end
   end
   private
