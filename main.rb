@@ -13,7 +13,7 @@ class FanboxItems
     @random = Random.new
   end
   def get_all
-    postlist = JSON.parse(get_raw("https://fanbox.pixiv.net/api/post.listCreator?userId=#{@user_id}&limit=10"))
+    postlist = JSON.parse(get_raw("https://api.fanbox.cc/post.listCreator?creatorId=#{@user_id}&limit=10"))
     while loop
       sleep(@random.rand(1.0)+1)
       postlist['body']["items"].each do |item|
@@ -103,7 +103,7 @@ class FanboxItems
   def get_raw(url)
     uri = URI.parse(url)
     req = Net::HTTP::Get.new(uri.request_uri)
-    req['origin'] = 'https://www.pixiv.net'
+    req['origin'] = 'https://www.fanbox.cc'
     req['cookie'] = @cookies.map{|k,v|
       "#{k}=#{v}"
     }.join(';')
@@ -125,20 +125,20 @@ OptionParser.new do |opt|
 end
 
 if option[:id] == nil then
-    puts "target user id?"
+    puts "target creator id?"
     user_id = STDIN.gets.chomp
 else
     user_id = option[:id]
 end
 if option[:session] == nil then
-    puts "your PHPSESSID?"
+    puts "your FANBOXSESSID?"
     phpsessid = STDIN.gets.chomp
 else
     phpsessid = option[:session]
 end
 cookies={
   #'personalization_id' => '"v1_hKYXzwe8wclGl/P4VPRwPw=="',
-  'PHPSESSID' => phpsessid
+  'FANBOXSESSID' => phpsessid
 }
 
 fi = FanboxItems.new(user_id,cookies)
