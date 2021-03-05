@@ -1,3 +1,4 @@
+require 'set'
 class FSEscape
   def self.escape(path, escape_char = '_')
       reserved_words_windows = Set.new([
