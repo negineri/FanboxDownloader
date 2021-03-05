@@ -50,14 +50,22 @@ class FanboxItems
             case data['type']
             when "p"
               article = "#{article}#{data['text']}  \n"
+            when "header"
+              article = "#{article}## #{data['text']}  \n"
             when "image"
               image_data = item['body']['imageMap'][data['imageId']]
               article = "#{article}#{sprintf("<img src=\"%04d.%s\" alt=\"\" width=\"%d\" height=\"%d\"><br>\n",i,image_data['extension'],image_data['width'],image_data['height'])}"
               open(sprintf("%s/%04d.%s",savedataDirPath,i,image_data['extension']),'wb') do |output|
                 output.write(get_raw(image_data['originalUrl']))
               end
+            when "file"
+              file_data = item['body']['fileMap'][data['fileId']]
+              article = "#{article}#{sprintf("[%s](\"%s.%s\")  \n",file_data['name'],file_data['name'],file_data['extension'])}"
+              open(sprintf("%s/%s.%s",savedataDirPath,file_data['name'],file_data['extension']),'wb') do |output|
+                output.write(get_raw(file_data['url']))
+              end
             else
-              p "ERROR: undefined article data type (#{item['id']})"
+              p "ERROR: undefined article data type \"#{data['type']}\" (#{item['id']})"
             end
           end
           open("#{savedataDirPath}/article.md", 'w') do |output|
@@ -91,7 +99,7 @@ class FanboxItems
             end
           end
         else
-          p "ERROR: undefined post type (#{item['id']})"
+          p "ERROR: undefined post type \"#{item['type']}\" (#{item['id']})"
         end
       end
       p postlist['body']['nextUrl']
