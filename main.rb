@@ -54,7 +54,7 @@ class FanboxItems
               article = "#{article}## #{data['text']}  \n"
             when "image"
               image_data = item['body']['imageMap'][data['imageId']]
-              article = "#{article}#{sprintf("<img src=\"%04d.%s\" alt=\"\" width=\"%d\" height=\"%d\"><br>\n",i,image_data['extension'],image_data['width'],image_data['height'])}"
+              article = "#{article}#{sprintf("<img src=\"%04d.%s\"><br>\n",i,image_data['extension'])}"
               open(sprintf("%s/%04d.%s",savedataDirPath,i,image_data['extension']),'wb') do |output|
                 output.write(get_raw(image_data['originalUrl']))
               end
