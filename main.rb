@@ -64,6 +64,23 @@ class FanboxItems
               open(sprintf("%s/%s.%s",savedataDirPath,file_data['name'],file_data['extension']),'wb') do |output|
                 output.write(get_raw(file_data['url']))
               end
+            when "url_embed"
+              case item['body']['urlEmbedMap'][data['urlEmbedId']]['type']
+              when 'fanbox.post'
+                url_embed_postinfo = item['body']['urlEmbedMap'][data['urlEmbedId']]['postInfo']
+                article = "#{article}[#{url_embed_postinfo['title']}](https://fanbox.cc/@#{url_embed_postinfo['creatorId']}/posts/#{url_embed_postinfo['id']}))  \n"
+              else
+                p "ERROR: undefined url_embed data type \"#{item['body']['urlEmbedMap'][data['urlEmbedId']]['type']}\" (#{item['id']})"
+              end
+            when "embed"
+              case item['body']['embedMap'][data['embedId']]['serviceProvider']
+              when 'fanbox'
+                # TODO
+                embed_content_info = item['body']['embedMap'][data['embedId']]['contentId'].split('/')
+                article = "#{article}#{embed_content_info = item['body']['embedMap'][data['embedId']]['contentId']}  \n"
+              else
+                p "ERROR: undefined embed data type \"#{item['body']['embedMap'][data['embedId']]['type']}\" (#{item['id']})"
+              end
             else
               p "ERROR: undefined article data type \"#{data['type']}\" (#{item['id']})"
             end
