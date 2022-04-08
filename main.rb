@@ -3,6 +3,7 @@ require 'json'
 require 'uri'
 require './escape'
 require 'optparse'
+require 'fileutils'
 
 class FanboxItems
   def initialize(user_id,cookies)
@@ -20,6 +21,7 @@ class FanboxItems
         savedataDirPath = "#{@savedataDir}/#{@user_id}/posts/#{item['id']}_#{FSEscape.escape(item['title'])}/"
         next unless Dir.glob("#{savedataDirPath}").empty?
         sleep(@random.rand(1.0)+1)
+        savedataDirPath = savedataDirPath.byteslice(0, 250).scrub('')
         FileUtils.mkdir_p(savedataDirPath)
         next if item['body'] == nil
         case item['type']
@@ -69,6 +71,15 @@ class FanboxItems
               when 'fanbox.post'
                 url_embed_postinfo = item['body']['urlEmbedMap'][data['urlEmbedId']]['postInfo']
                 article = "#{article}[#{url_embed_postinfo['title']}](https://fanbox.cc/@#{url_embed_postinfo['creatorId']}/posts/#{url_embed_postinfo['id']}))  \n"
+              when 'default'
+                url_embed_url = item['body']['urlEmbedMap'][data['urlEmbedId']]['url']
+                article = "#{article}[#{url_embed_url}](#{url_embed_url}))  \n"
+              when 'html.card'
+                url_embed_html = item['body']['urlEmbedMap'][data['urlEmbedId']]['html']
+                article = "#{article}#{url_embed_html}  \n"
+              when 'html'
+                url_embed_html = item['body']['urlEmbedMap'][data['urlEmbedId']]['html']
+                article = "#{article}#{url_embed_html}  \n"
               else
                 p "ERROR: undefined url_embed data type \"#{item['body']['urlEmbedMap'][data['urlEmbedId']]['type']}\" (#{item['id']})"
               end
@@ -78,8 +89,15 @@ class FanboxItems
                 # TODO
                 embed_content_info = item['body']['embedMap'][data['embedId']]['contentId'].split('/')
                 article = "#{article}#{embed_content_info = item['body']['embedMap'][data['embedId']]['contentId']}  \n"
+              when 'twitter'
+                # TODO
+                p "IGNORE: undefined embed data type \"#{item['body']['embedMap'][data['embedId']]['serviceProvider']}\" (#{item['id']})"
+              when 'youtube'
+                # TODO
+                embed_content_info = item['body']['embedMap'][data['embedId']]['contentId']
+                article = "#{article}[https://youtu.be/#{embed_content_info}](https://youtu.be/#{embed_content_info}))  \n"
               else
-                p "ERROR: undefined embed data type \"#{item['body']['embedMap'][data['embedId']]['type']}\" (#{item['id']})"
+                p "ERROR: undefined embed data type \"#{item['body']['embedMap'][data['embedId']]['serviceProvider']}\" (#{item['id']})"
               end
             else
               p "ERROR: undefined article data type \"#{data['type']}\" (#{item['id']})"
