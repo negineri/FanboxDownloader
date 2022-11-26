@@ -2,3 +2,4 @@
 /data
 /.bundle
 Gemfile.lock
+sync.sh

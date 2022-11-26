@@ -18,6 +18,8 @@ class FanboxItems
     while loop
       sleep(@random.rand(1.0)+1)
       postlist['body']["items"].each do |item|
+        item = JSON.parse(get_raw("https://api.fanbox.cc/post.info?postId=#{item["id"]}"))
+        item = item["body"]
         savedataDirPath = "#{@savedataDir}/#{@user_id}/posts/#{item['id']}_#{FSEscape.escape(item['title'])}/"
         next unless Dir.glob("#{savedataDirPath}").empty?
         sleep(@random.rand(1.0)+1)
